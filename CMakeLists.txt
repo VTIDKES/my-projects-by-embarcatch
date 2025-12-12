@@ -1,73 +1,83 @@
-# Generated Cmake Pico project file
-
-cmake_minimum_required(VERSION 3.13)
-
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Initialise pico_sdk from installed location
-# (note this can come from environment, CMake cache etc)
-
 # == DO NOT EDIT THE FOLLOWING LINES for the Raspberry Pi Pico VS Code Extension to work ==
 if(WIN32)
     set(USERHOME $ENV{USERPROFILE})
 else()
     set(USERHOME $ENV{HOME})
 endif()
-set(sdkVersion 1.5.1)
-set(toolchainVersion 13_2_Rel1)
-set(picotoolVersion 2.0.0)
+set(sdkVersion 2.1.0)
+set(toolchainVersion 13_3_Rel1)
+set(picotoolVersion 2.1.0)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
 if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
+cmake_minimum_required(VERSION 3.13)
+
+# Set C and C++ standards
+set(CMAKE_C_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Determine user home directory based on the operating system
+if(WIN32)
+    set(USERHOME $ENV{USERPROFILE})
+else()
+    set(USERHOME $ENV{HOME})
+endif()
+
+# Set SDK versions
+set(sdkVersion 2.1.0)
+set(toolchainVersion 13_3_Rel1)
+set(picotoolVersion 2.1.0)
+
+# Include Pico SDK configuration for VS Code
+set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
+if (EXISTS ${picoVscode})
+    include(${picoVscode})
+endif()
+
+# Specify the board type
 set(PICO_BOARD pico_w CACHE STRING "Board type")
 
-# Pull in Raspberry Pi Pico SDK (must be before project)
+# Include Raspberry Pi Pico SDK
 include(pico_sdk_import.cmake)
 
-project(Menu_OLED C CXX ASM)
+# Define the project
+project(TAREFA7 C CXX ASM)
 
-# Initialise the Raspberry Pi Pico SDK
+# Initialize the Raspberry Pi Pico SDK
 pico_sdk_init()
 
-# Add executable. Default name is the project name, version 0.1
+# Add executable target
+add_executable(TAREFA7 TAREFA7.c libs/ssd1306.c)
 
-add_executable(Menu_OLED
- Menu_OLED.c 
- ssd1306.c 
- programa1.c 
- programa2.c 
- programa3.c)
-
-pico_set_program_name(Menu_OLED "Menu_OLED")
-pico_set_program_version(Menu_OLED "0.1")
+# Set program name and version
+pico_set_program_name(TAREFA7 "TAREFA7")
+pico_set_program_version(TAREFA7 "0.1")
 
 # Generate PIO header
-#pico_generate_pio_header(Menu_OLED ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
+pico_generate_pio_header(TAREFA7 ${CMAKE_CURRENT_LIST_DIR}/blink.pio)
 
-# Modify the below lines to enable/disable output over UART/USB
-pico_enable_stdio_uart(Menu_OLED 1)
-pico_enable_stdio_usb(Menu_OLED 1)
+# Configure UART/USB output options
+pico_enable_stdio_uart(TAREFA7 0)  # Disable UART output
+pico_enable_stdio_usb(TAREFA7 1)    # Enable USB output
 
-# Add the standard library to the build
-target_link_libraries(Menu_OLED
+# Link standard libraries and hardware components
+target_link_libraries(TAREFA7
         pico_stdlib
-        hardware_pwm
-        hardware_clocks)
-
-# Add the standard include files to the build
-target_include_directories(Menu_OLED PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
-)
-
-# Add any user requested libraries
-target_link_libraries(Menu_OLED 
+        hardware_adc
         hardware_i2c
         hardware_pio
-        hardware_adc)
+        pico_lwip_http
+        pico_cyw43_arch_lwip_threadsafe_background
+    )
 
-pico_add_extra_outputs(Menu_OLED)
+# Include directories for the target
+target_include_directories(TAREFA7 PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}
+        libs
+)
 
+# Generate extra outputs (e.g., hex, bin files)
+pico_add_extra_outputs(TAREFA7)
